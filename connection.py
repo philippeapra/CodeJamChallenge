@@ -3,6 +3,9 @@ import json
 from Truck import *
 from Load import *
 from CustomEncoder import *
+import sys
+from  Notification import *
+from algo import *
 
 
 # Connection parameters
@@ -15,6 +18,9 @@ loads = {}
 numOfTrucks=0
 numOfLoads=0
 load_coord=[]
+day_started=False
+notificationList = []
+
 # Callback when connecting to the broker
 def on_connect(client, userdata, flags, rc):
     # with open("new_file.txt", "w") as file:
@@ -23,56 +29,80 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("CodeJam")
 
 
+
+
 # Callback when receiving a message
 def on_message(client, userdata, msg):
-    #print(msg.topic+" "+str(msg.payload))
+    
+    global day_started
     payload = msg.payload.decode("utf-8")
+    event = json.loads(payload)
+    event_type = event['type']
+    global loads
+    global trucks
     try:
-        event = json.loads(payload)
-        event_type = event['type']
-        if event_type == 'Truck':
-            truck = Truck(
-                event['truckId'],
-                event['positionLatitude'],
-                event['positionLongitude'],
-                event['equipType'],
-                event['nextTripLengthPreference']
-            )
-            global numOfTrucks
-            numOfTrucks+=1
+        if day_started:
+            if event_type == 'Truck':
+                print(msg.topic+" "+str(msg.payload))
+                truck = Truck(
+                    event['truckId'],
+                    event['positionLatitude'],
+                    event['positionLongitude'],
+                    event['equipType'],
+                    event['nextTripLengthPreference'],
+                    event['timestamp']
+                )
+                global numOfTrucks
+                numOfTrucks+=1
+                truck.idleTime=trucks[event['truckId']].idleTime
+                trucks[event['truckId']] = truck
+                
+                for loadId, load in loads.items():
+                    if sendNotification(truck,load):
+                        notificationList.append(Notification(truck.truckId,load.loadId,truck.timestamp))
 
-            trucks[event['truckId']] = truck
 
-        elif event_type == 'Load':
-            load = Load(
-                event['loadId'],
-                event['originLatitude'],
-                event['originLongitude'],
-                event['destinationLatitude'],
-                event['destinationLongitude'],
-                event['equipmentType'],
-                event['price'],
-                event['mileage']
-            )
-            loads[event['loadId']] = load
-            global numOfLoads
-            numOfLoads+=1
-            
+            elif event_type == 'Load':
+                print(msg.topic+" "+str(msg.payload))
+                load = Load(
+                    event['loadId'],
+                    event['originLatitude'],
+                    event['originLongitude'],
+                    event['destinationLatitude'],
+                    event['destinationLongitude'],
+                    event['equipmentType'],
+                    event['price'],
+                    event['mileage'],
+                    event['timestamp']
+                )
+                loads[event['loadId']] = load
+                global numOfLoads
+                numOfLoads+=1
+                for truckId, truck in trucks.items():
+                    if sendNotification(truck,load):
+                        notificationList.append(Notification(truck.truckId,load.loadId,load.timestamp))
+                
         elif event_type == 'End':
            print("numOfLoads: "+str(numOfLoads))
            print("numOfTrucks: " + str(numOfTrucks))
            print("numOfUniqueLoads: "+str(len(loads)))
            print("numOfUniqueTrucks: "+str(len(trucks)))
+           
            global load_coord
            load_coord=[]
            for key, value in loads.items():
                load_coord.append(value.origin)
            numOfLoads=0
            numOfTrucks=0
+           loads={}
+           trucks={}
            print("Day ended")
+           if day_started:
+               sys.exit()
 
         elif event_type == 'Start':
            print("Day started")
+           day_started=True
            numOfLoads=0
            numOfTrucks=0
            
@@ -87,7 +117,7 @@ def on_message(client, userdata, msg):
     #         file.write(str(trucks)+"\n"+str(loads)+"\n")
 
 # Create MQTT client and set username and password
-client = mqtt.Client("ExceptionHandlers01")
+client = mqtt.Client("ExceptionHandlers02")
 client.username_pw_set(mqtt_user, password=mqtt_password)
 
 # Assign callback functions
