@@ -2,8 +2,10 @@ import heapq
 import json
 import requests
 import paho.mqtt.client as mqtt
-from Truck import Truck
-from Load import Load
+from Truck import *
+from Load import *
+from travel_time import *
+from connection import *
 
 def notify_trucker(truck, load):
     print(f"Notify trucker {truck.truckId} about load {load.loadId}")
@@ -13,6 +15,13 @@ def notify_trucker(truck, load):
 def get_deadhead_time(truck, load, api_key):
     deadhead_time, _ = get_route(truck.position[0], truck.position[1], load.origin[0], load.origin[1], api_key)
     return deadhead_time
+
+def calculate_profit(load, truck, api_key):
+    _, deadhead_distance = get_route(truck.position[0], truck.position[1], load.origin[0], load.origin[1], api_key)
+    total_distance = deadhead_distance + load.mileage
+    fuel_cost = 1.38 * total_distance
+    profit = load.price - fuel_cost
+    return profit
 
 
 def match_loads_to_trucks(api_key):
