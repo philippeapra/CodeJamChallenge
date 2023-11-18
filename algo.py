@@ -11,6 +11,10 @@ def notify_trucker(truck, load):
     print(f"Notify trucker {truck.truckId} about load {load.loadId}")
 
 
+deadhead_time_weightage= 0
+trip_length_preference_weightage = 0
+profit_weightage= 0
+
 
 def get_deadhead_time(truck, load, api_key):
     deadhead_time, _ = get_route(truck.position[0], truck.position[1], load.origin[0], load.origin[1], api_key)
@@ -22,6 +26,16 @@ def calculate_profit(load, truck, api_key):
     fuel_cost = 1.38 * total_distance
     profit = load.price - fuel_cost
     return profit
+
+def get_tripLength_preferenceNumber_score(truck):
+    if (truck.tripLengthPreference == "Long" and load.mileage > 200):
+        return load.mileage / 200
+
+
+def calculate_score(load, truck, api_key):
+    score = get_tripLength_preferenceNumber_score() * trip_length_preference_weightage + calculate_profit() * profit_weightage \
+    + get_deadhead_time(load, truck, api_key) * deadhead_time_weightage
+
 
 
 def match_loads_to_trucks(api_key):
@@ -41,11 +55,10 @@ def match_loads_to_trucks(api_key):
             trip_length_match = (load.mileage < 200 and truck.tripLengthPreference == "Short") or \
                                 (load.mileage >= 200 and truck.tripLengthPreference == "Long")
 
-
             # Calculate score (adjust the weights and logic as needed)
             score = profit - deadhead_time - idle_time
-            if trip_length_match:
-                score += 100  # Arbitrary bonus for matching trip length preference
+
+
 
             heapq.heappush(load_heap, (-score, load))
 
