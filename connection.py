@@ -5,7 +5,8 @@ from Load import *
 from CustomEncoder import *
 import sys
 from  Notification import *
-from algo import *
+
+#from algo import sendNotification
 
 
 # Connection parameters
@@ -20,7 +21,9 @@ numOfLoads=0
 load_coord=[]
 day_started=False
 notificationList = []
+priceList = []
 
+print(4)
 # Callback when connecting to the broker
 def on_connect(client, userdata, flags, rc):
     # with open("new_file.txt", "w") as file:
@@ -40,6 +43,7 @@ def on_message(client, userdata, msg):
     event_type = event['type']
     global loads
     global trucks
+    #sendNotification(Truck(),Load())
     try:
         if day_started:
             if event_type == 'Truck':
@@ -54,12 +58,14 @@ def on_message(client, userdata, msg):
                 )
                 global numOfTrucks
                 numOfTrucks+=1
-                truck.idleTime=trucks[event['truckId']].idleTime
+                # temp = trucks[event['truckId']]
+                # if temp:
+                #     truck.idleTime=trucks[event['truckId']].idleTime
                 trucks[event['truckId']] = truck
                 
-                for loadId, load in loads.items():
-                    if sendNotification(truck,load):
-                        notificationList.append(Notification(truck.truckId,load.loadId,truck.timestamp))
+                # for loadId, load in loads.items():
+                #     if sendNotification(truck,load):
+                #         notificationList.append(Notification(truck.truckId,load.loadId,truck.timestamp))
 
 
             elif event_type == 'Load':
@@ -75,14 +81,16 @@ def on_message(client, userdata, msg):
                     event['mileage'],
                     event['timestamp']
                 )
+                priceList.append(int(event['price']))
+                
                 loads[event['loadId']] = load
                 global numOfLoads
                 numOfLoads+=1
-                for truckId, truck in trucks.items():
-                    if sendNotification(truck,load):
-                        notificationList.append(Notification(truck.truckId,load.loadId,load.timestamp))
+                # for truckId, truck in trucks.items():
+                #     if sendNotification(truck,load):
+                #         notificationList.append(Notification(truck.truckId,load.loadId,load.timestamp))
                 
-        elif event_type == 'End':
+        if event_type == 'End':
            print("numOfLoads: "+str(numOfLoads))
            print("numOfTrucks: " + str(numOfTrucks))
            print("numOfUniqueLoads: "+str(len(loads)))
@@ -98,6 +106,11 @@ def on_message(client, userdata, msg):
            trucks={}
            print("Day ended")
            if day_started:
+               from algo import calculate_profit
+               for truckId, truck in trucks.items():
+                   for loadId, load in load.items():
+                       calculate_profit(load,truck)
+               print(sum(priceList)/len(priceList))
                sys.exit()
 
         elif event_type == 'Start':
@@ -129,3 +142,6 @@ client.connect(mqtt_broker, mqtt_port, 60)
 
 # Start the loop
 client.loop_forever()
+
+
+

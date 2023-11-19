@@ -9,10 +9,8 @@ from connection import *
 from Notification import *
 
 
-deadhead_time_weightage= 1
-trip_length_preference_weightage = 1
-profit_weightage= 1
-idleTimeWeightage= 1
+
+
 matched_loads = {}
 ThresholdValue = 0
 
@@ -40,28 +38,49 @@ def get_tripLength_preferenceNumber_score(truck,load):
         return ((200 / load.mileage)-0.5)
     elif (truck.tripLengthPreference == "Short" and load.mileage < 200):
         return 200 / load.mileage
-    
 
-def calculate_score(load, truck, api_key):
-    score = get_tripLength_preferenceNumber_score() * trip_length_preference_weightage + calculate_profit() * profit_weightage \
-    + get_deadhead_time(load, truck, api_key) * deadhead_time_weightage + truck.idleTime 
+# def getProfitNumberScore(load, truck, api_key):
+#     profit = calculate_profit(load, truck, api_key)
+#     if (profit < 50):
+#         return 1
+#     elif (profit < 100):
+#         return 2
+#     elif (profit < 150):
+#         return 3
+#     elif (profit < 200):
+#         return 4
+#     elif (profit < 250):
+#         return 5
+#     elif (profit < 300):
+#         return 6
+#     elif (profit)
+        
+
+#def calculate_score(load,  truck, api_key):
+ #   score = get_tripLength_preferenceNumber_score() * truck.trip_length_preference_weightage + getProfitNumberScore() * truck.profit_weightage \
+  #  + get_deadhead_time(load, truck, api_key) * truck.deadhead_time_weightage + truck.idleTime 
 
 
-def checkThresholdValue(load, truck, api_key, ThresholdValue):
-    if calculate_score(load, truck, api_key) > ThresholdValue :
-        truck.idleTime = 0
-        return True
-    truck.idleTime = truck.idleTime + 1
-    return False
+# def checkThresholdValue(load, truck, api_key, ThresholdValue):
+#     if calculate_score(load, truck, api_key) > ThresholdValue :
+#         return True
+#     return False
 
-def sendNotification():
-    if checkThresholdValue :
-        return True
+def sendNotification(truck, load):
+     
+    if load.equipmentType != truck.equipType:
+        return False
+    profit = calculate_profit(load,truck,api_key)
+    if profit <=0:
+        return False
+    # if checkThresholdValue :
+    #     return True
     return False
 
 def match_loads_to_truck(api_key, loads, truck):
     notifications =[]
-
+   
+ 
 
 
 
