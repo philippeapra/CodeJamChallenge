@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <!-- Include Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        #mapid {
+            height: 400px;
+            width: 100%; /* Full width */
+        }
+        .fluorescent-green {
+            background-color: #39ff14; /* Fluorescent green background */
+            color: #000; /* Text color */
+        }
+        /* Custom styles */
+        .table-container {
+            background-color: #fff; /* White background for contrast */
+            padding: 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
+        }
+        .is-fluorescent {
+            color: #39ff14; /* Fluorescent green text */
+        }
+        .hero-background {
+            background-image: url('path_to_your_image.jpg'); /* Replace with your image path */
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero is-dark is-bold hero-background">
+        <div class="hero-head">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <a class="navbar-item is-fluorescent" href="#">123loadboard</a>
+                </div>
+                <!-- Navigation links -->
+            </nav>
+        </div>
+        <div class="hero-body fluorescent-green">
+            <div class="container has-text-centered">
+                <h1 class="title">
+                    The best load board to find freight for truckers and owner-operators
+                </h1>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-5">
+        <!-- Content Container -->
+        <div class="columns">
+            <div class="column is-half">
+                <!-- Map Section -->
+                <div id="mapid"></div>
+            </div>
+            <div class="column is-half">
+                <!-- Ranking Table -->
+                <div class="table-container">
+                    <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Profit</th>
+                                <th>Fuel Emission</th>
+                                <th>Length</th>
+                                <th>Deadhead Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Placeholder for dynamic rows -->
+                            <!-- Replace with server-side rendered data -->
+                            <tr>
+                                <td>1</td>
+                                <td>$1000</td>
+                                <td>20 kg CO2</td>
+                                <td>500 miles</td>
+                                <td>1 hour</td>
+                            </tr>
+                            <!-- More rows... -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box"> <!-- Box container for the form -->
+                    <form action="/rank_categories" method="post">
+                        <div class="field">
+                            <label class="label" for="maximize_profitability">Maximizing Profitability:</label>
+                            <div class="control">
+                                <label class="radio">
+                                    <input type="radio" name="maximize_profitability" value="low">
+                                    Low
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="maximize_profitability" value="medium">
+                                    Medium
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="maximize_profitability" value="high">
+                                    High
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="minimize_deadhead_time">Minimizing Deadhead Time:</label>
+                            <div class="control">
+                                <label class="radio">
+                                    <input type="radio" name="minimize_deadhead_time" value="low">
+                                    Low
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="minimize_deadhead_time" value="medium">
+                                    Medium
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="minimize_deadhead_time" value="high">
+                                    High
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="meet_length_preference">Meet Length Preference:</label>
+                            <div class="control">
+                                <label class="radio">
+                                    <input type="radio" name="meet_length_preference" value="low">
+                                    Low
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="meet_length_preference" value="medium">
+                                    Medium
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="meet_length_preference" value="high">
+                                    High
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="minimize_idle_time">Minimize Idle Time:</label>
+                            <div class="control">
+                                <label class="radio">
+                                    <input type="radio" name="minimize_idle_time" value="high">
+                                    Low
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="minimize_idle_time" value="high">
+                                    Medium
+                                </label>
+                                <label class="radio">
+                                    <input type="radio" name="minimize_idle_time" value="high">
+                                    High
+                                </label>
+                            </div>
+                        </div>
+            </div>
+        </div> 
+        <button id="muteButton" class="button is-warning">Mute</button>
+        <!-- End Content Container -->
+    </div>
+
+    <!-- Include Leaflet JS and Your Leaflet Map Script -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+         document.getElementById('muteButton').addEventListener('click', function() {
+            console.log('Mute button clicked');
+            // Add your mute functionality here
+        });
+
+
+        // Leaflet map initialization code
+        // JavaScript code for Leaflet map initialization
+        var latitude = {{ latitude }};
+        var longitude = {{ longitude }};
+        var latitude2 = {{ latitude2 }};
+        var latitude3 = {{ latitude3}};
+        var longitude2 = {{ longitude2 }};
+        var longitude3 = {{ longitude3 }};
+
+        var mymap = L.map('mapid').setView([latitude, longitude], 10);
+         // Add OpenStreetMap tile layer to the map
+         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 10,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(mymap);
+
+        // Add a circle to the map with passed coordinates
+        L.circle([latitude, longitude], {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(mymap).bindPopup("I am a circle.");
+        // Directions example (you will need to use a routing plugin or API)
+        // This is a simplified example, assuming you have the coordinates for the two other points
+        var pointA = L.marker([latitude, longitude]).addTo(mymap);
+        var pointB = L.marker([latitude2, longitude2]).addTo(mymap); // Replace with actual coordinates
+        var pointC = L.marker([latitude3, longitude3]).addTo(mymap); // Replace with actual coordinates
+
+        var route1 = L.polyline([pointA.getLatLng(), pointB.getLatLng()], {color: 'green'}).addTo(mymap);
+        var route2 = L.polyline([pointA.getLatLng(), pointC.getLatLng()], {color: 'blue'}).addTo(mymap);
+
+        mymap.fitBounds(route1.getBounds());
+    </script>
+</body>
+</html>
