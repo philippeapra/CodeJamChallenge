@@ -2,60 +2,81 @@
 <html>
 <head>
     <title>Truck ID Entry</title>
+    <!-- Include Bulma CSS for styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        body, html {
+            height: 100%;
             margin: 0;
-            padding: 0;
+        }
+
+        .hero-background {
+            /* Placeholder for your background image */
+            background-image: url('path_to_your_image.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-body {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
         }
 
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        label, input {
-            display: block;
+        .container {
             width: 100%;
-            margin-bottom: 10px;
+            padding: 20px;
         }
 
-        input[type="text"] {
-            padding: 8px;
-            border: 1px solid #ddd;
+        .box {
+            max-width: 400px;
+            margin: auto;
+        }
+
+        .is-fluorescent {
+            background-color: #2d991a; /* Fluorescent green background */
+            color: #000; /* Text color */
+            border-color: #2d991a; /* Fluorescent green border */
+        }
+
+        .is-fluorescent:hover {
+            background-color: #2d991a; /* Slightly darker green on hover */
+        }
+
+        .input, .button {
             border-radius: 4px;
         }
 
-        input[type="submit"] {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background: #0056b3;
+        /* Error message styling */
+        .error {
+            color: red;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <h1>Enter Truck ID</h1>
-    <form action="/submit_truck_id" method="post">
-        <label for="truckId">Truck ID:</label>
-        <input type="text" id="truckId" name="truckId" required>
-        <input type="submit" value="Submit">
-        {% if error %}
-            <p style="color: red;">{{ error }}</p>
-        {% endif %}
-    </form>
+    <section class="hero is-fullheight is-dark hero-background">
+        <div class="hero-body">
+            <div class="container has-text-centered box">
+                <h1 class="title is-fluorescent">Enter Truck ID</h1>
+                <form action="/submit_truck_id" method="post" class="form">
+                    <div class="field">
+                        <label class="label" for="truckId">Truck ID:</label>
+                        <div class="control">
+                            <input class="input" type="text" id="truckId" name="truckId" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="button is-fluorescent" type="submit" value="Submit">
+                        </div>
+                    </div>
+                    {% if error %}
+                        <p class="error">{{ error }}</p>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </section>
 </body>
 </html>

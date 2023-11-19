@@ -12,7 +12,7 @@
             width: 100%; /* Full width */
         }
         .fluorescent-green {
-            background-color: #39ff14; /* Fluorescent green background */
+            background-color: #2d991a; /* Fluorescent green background */
             color: #000; /* Text color */
         }
         /* Custom styles */
@@ -24,7 +24,7 @@
             box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1);
         }
         .is-fluorescent {
-            color: #39ff14; /* Fluorescent green text */
+            color: #2d991a; /* Fluorescent green text */
         }
         .hero-background {
             background-image: url('path_to_your_image.jpg'); /* Replace with your image path */
@@ -69,21 +69,21 @@
                                 <th>Profit</th>
                                 <th>Fuel Emission</th>
                                 <th>Length</th>
-                                <th>Deadhead Time</th>
+                                <th>Total Time (Deadhead + Trip time)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Placeholder for dynamic rows -->
-                            <!-- Replace with server-side rendered data -->
-                            <tr>
-                                <td>1</td>
-                                <td>$1000</td>
-                                <td>20 kg CO2</td>
-                                <td>500 miles</td>
-                                <td>1 hour</td>
-                            </tr>
-                            <!-- More rows... -->
+                            {% for row in data_rows %}
+                                <tr>
+                                    <td>{{ row.rank }}</td>
+                                    <td>{{ row.profit }}</td>
+                                    <td>{{ row.emission }}</td>
+                                    <td>{{ row.length }}</td>
+                                    <td>{{ row.time }}</td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
+                        
                     </table>
                 </div>
                 <div class="box"> <!-- Box container for the form -->
@@ -156,6 +156,11 @@
                                 </label>
                             </div>
                         </div>
+                        <div class="field">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">Submit Rankings</button>
+                            </div>
+                        </div>
             </div>
         </div> 
         <button id="muteButton" class="button is-warning">Mute</button>
@@ -198,10 +203,14 @@
         // This is a simplified example, assuming you have the coordinates for the two other points
         var pointA = L.marker([latitude, longitude]).addTo(mymap);
         var pointB = L.marker([latitude2, longitude2]).addTo(mymap); // Replace with actual coordinates
-        var pointC = L.marker([latitude3, longitude3]).addTo(mymap); // Replace with actual coordinates
+        //var pointC = L.marker([latitude3, longitude3]).addTo(mymap); // Replace with actual coordinates
 
         var route1 = L.polyline([pointA.getLatLng(), pointB.getLatLng()], {color: 'green'}).addTo(mymap);
+        //var route2 = L.polyline([pointA.getLatLng(), pointC.getLatLng()], {color: 'blue'}).addTo(mymap);
+        if (latitude3 !== 0 && longitude3 !== 0) {
+        var pointC = L.marker([latitude3, longitude3]).addTo(mymap);
         var route2 = L.polyline([pointA.getLatLng(), pointC.getLatLng()], {color: 'blue'}).addTo(mymap);
+    }
 
         mymap.fitBounds(route1.getBounds());
     </script>
